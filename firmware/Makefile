@@ -18,7 +18,7 @@
 
 DEVICE     = atmega328p
 CLOCK      = 16000000
-PROGRAMMER = -c stk500v2 -P /dev/cu.usbmodemavrdoper1
+PROGRAMMER = -c stk500v2 -P /dev/tty.usbmodemavrdope1
 OBJECTS    = main.o
 
 # For computing fuse byte values for other devices and options see
