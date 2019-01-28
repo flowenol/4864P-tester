@@ -10,12 +10,12 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-#define RAS PD0
-#define CAS PD1
-#define WE PD2
-#define DOUT PD3
-#define DIN PD4
-#define LED PD5
+#define RAS PB0
+#define CAS PB1
+#define WE PB2
+#define DOUT PB3
+#define DIN PB4
+#define LED PB5
 
 #define address_t uint8_t
 
@@ -32,14 +32,14 @@ void writeAddress(address_t address) {
 
 void writePin(uint8_t pin, state_t data) {
     if (data == HIGH) {
-        PORTD = PORTD  | (1 << pin);
+        PORTB = PORTB  | (1 << pin);
     } else {
-        PORTD = PORTD & ~(1 << pin);
+        PORTB = PORTB & ~(1 << pin);
     }
 }
 
 state_t readPin(uint8_t pin) {
-    uint8_t data = (PIND & (1 << pin));
+    uint8_t data = (PINB & (1 << pin));
     if (data > 0) {
         return HIGH;
     }
@@ -170,9 +170,9 @@ int main(void)
             writePin(LED, HIGH);
         } else {
             writePin(LED, HIGH);
-            _delay_us(100);
+            _delay_ms(100);
             writePin(LED, LOW);
-            _delay_us(100);
+            _delay_ms(100);
         }
     }
 
