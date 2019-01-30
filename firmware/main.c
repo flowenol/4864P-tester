@@ -51,9 +51,7 @@ void refresh() {
     for (i = 0; i < 128; i++) {
         writeAddress(i);
 
-        //_delay_us(1.0);
         writePin(RAS, LOW);
-        //_delay_us(1.0);
         writePin(RAS, HIGH);
     }
 
