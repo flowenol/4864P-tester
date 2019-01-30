@@ -24,7 +24,7 @@ typedef enum {HIGH, LOW} state_t;
 #define MEM_OK 0x01
 #define MEM_REFRESHED 0x02
 
-uint8_t flags = 0x00;
+uint8_t flags = MEM_OK;
 
 void writeAddress(address_t address) {
     PORTD = address;
@@ -50,13 +50,13 @@ void refresh() {
     address_t i;
     for (i = 0; i < 128; i++) {
         writeAddress(i);
-        
-        _delay_us(1.0);
+
+        //_delay_us(1.0);
         writePin(RAS, LOW);
-        _delay_us(1.0);
+        //_delay_us(1.0);
         writePin(RAS, HIGH);
     }
-    
+
     flags |= MEM_REFRESHED;
 }
 
@@ -81,15 +81,15 @@ state_t readData(address_t address_h, address_t address_l) {
     state_t data = readPin(DOUT);
     writePin(RAS, HIGH);
     writePin(CAS, HIGH);
-    
+
     return data;
 }
 
 void setup() {
-    
+
     // Address
     DDRD = 0xFF;
-    
+
     // Control
     DDRB |= 1 << RAS;
     DDRB |= 1 << CAS;
@@ -97,15 +97,15 @@ void setup() {
     DDRB &= ~(1 << DOUT);
     DDRB |= 1 << DIN;
     DDRB |= 1 << LED;
-    
+
     _delay_us(500.0);
-    
+
     uint8_t i;
     for (i = 0; i < 8; i++) {
         refresh();
         _delay_ms(2);
     }
-    
+
     //65536 - 30 = 65506
     TCNT1 = 65506;   // for 1.8 ms at 16 MHz
     TCCR1A = 0x00;
@@ -120,41 +120,109 @@ ISR (TIMER1_OVF_vect)
     TCNT1 = 65506;   // for 1.8 ms at 16 MHz
 }
 
-void checkMem() {
+void readAfterWrite() {
     address_t address_h;
-    address_t address_l ;
+    address_t address_l;
     for (address_h = 0x00; address_h <= 0xFF; address_h += 0x01) {
         for (address_l = 0x00; address_l <= 0xFF; address_l += 0x01) {
-        write_h:
             writeData(address_h, address_l, HIGH);
             state_t data = readData(address_h, address_l);
-          
-            if ((flags & MEM_REFRESHED) > 0) {
+
+            if ((flags & MEM_REFRESHED) == MEM_REFRESHED) {
                 flags &= ~MEM_REFRESHED;
-                goto write_h;
+
+                writeData(address_h, address_l, HIGH);
+                data = readData(address_h, address_l);
             }
-            
+
             if (data != HIGH) {
-                goto end;
+                goto err;
             }
-            
-        write_l:
+
             writeData(address_h, address_l, LOW);
             data = readData(address_h, address_l);
-            
-            if ((flags & MEM_REFRESHED) > 0) {
-                flags |= ~MEM_REFRESHED;
-                goto write_l;
+
+            if ((flags & MEM_REFRESHED) == MEM_REFRESHED) {
+                flags &= ~MEM_REFRESHED;
+
+                writeData(address_h, address_l, LOW);
+                data = readData(address_h, address_l);
             }
-            
+
             if (data != LOW) {
-                goto end;
+                goto err;
+            }
+
+            if (address_l == 0xFF) {
+              break;
             }
         }
+
+        if (address_h == 0xFF) {
+          break;
+        }
     }
-    
-    flags |= MEM_OK;
-end:
+
+    return;
+err:
+    flags &= ~MEM_OK;
+    return;
+}
+
+void writeMem(state_t state) {
+    address_t address_h;
+    address_t address_l;
+    for (address_h = 0x00; address_h <= 0xFF; address_h += 0x01) {
+        for (address_l = 0x00; address_l <= 0xFF; address_l += 0x01) {
+            writeData(address_h, address_l, state);
+
+            if ((flags & MEM_REFRESHED) == MEM_REFRESHED) {
+                flags &= ~MEM_REFRESHED;
+
+                writeData(address_h, address_l, state);
+            }
+
+            if (address_l == 0xFF) {
+              break;
+            }
+        }
+
+        if (address_h == 0xFF) {
+          break;
+        }
+    }
+}
+
+void readMem(state_t state) {
+    address_t address_h;
+    address_t address_l;
+    for (address_h = 0x00; address_h <= 0xFF; address_h += 0x01) {
+        for (address_l = 0x00; address_l <= 0xFF; address_l += 0x01) {
+            state_t data = readData(address_h, address_l);
+
+            if ((flags & MEM_REFRESHED) == MEM_REFRESHED) {
+                flags &= ~MEM_REFRESHED;
+
+                data = readData(address_h, address_l);
+            }
+
+            if (data != state) {
+                goto read_err;
+            }
+
+            if (address_l == 0xFF) {
+              break;
+            }
+        }
+
+        if (address_h == 0xFF) {
+          break;
+        }
+    }
+
+    return;
+read_err:
+    flags &= ~MEM_OK;
     return;
 }
 
@@ -162,11 +230,15 @@ end:
 int main(void)
 {
     setup();
-    
-    checkMem();
-    
+
+    writeMem(HIGH);
+    readMem(HIGH);
+    writeMem(LOW);
+    readMem(LOW);
+    readAfterWrite();
+
     for(;;){
-        if ((flags & MEM_OK) > 0) {
+        if ((flags & MEM_OK) == MEM_OK) {
             writePin(LED, HIGH);
         } else {
             writePin(LED, HIGH);
