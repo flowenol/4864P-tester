@@ -18,7 +18,6 @@ All you need are:
 ## Schematics
 
 ![Schematics](./4864P-tester_bb.svg)
-<img src="./4864P-tester_bb.svg">
 
 ## Acknowledgments
 
