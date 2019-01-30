@@ -32,14 +32,14 @@ void writeAddress(address_t address) {
 
 void writePin(uint8_t pin, state_t data) {
     if (data == HIGH) {
-        PORTB = PORTB  | (1 << pin);
+        PORTB = PORTB  | _BV(pin);
     } else {
-        PORTB = PORTB & ~(1 << pin);
+        PORTB = PORTB & ~(_BV(pin));
     }
 }
 
 state_t readPin(uint8_t pin) {
-    uint8_t data = (PINB & (1 << pin));
+    uint8_t data = (PINB & _BV(pin));
     if (data > 0) {
         return HIGH;
     }
@@ -89,12 +89,12 @@ void setup() {
     DDRD = 0xFF;
 
     // Control
-    DDRB |= 1 << RAS;
-    DDRB |= 1 << CAS;
-    DDRB |= 1 << WE;
-    DDRB &= ~(1 << DOUT);
-    DDRB |= 1 << DIN;
-    DDRB |= 1 << LED;
+    DDRB |= _BV(RAS);
+    DDRB |= _BV(CAS);
+    DDRB |= _BV(WE);
+    DDRB &= ~(_BV(DOUT));
+    DDRB |= _BV(DIN);
+    DDRB |= _BV(LED);
 
     _delay_us(500.0);
 
@@ -107,8 +107,8 @@ void setup() {
     //65536 - 30 = 65506
     TCNT1 = 65506;   // for 1.8 ms at 16 MHz
     TCCR1A = 0x00;
-    TCCR1B = (1<<CS10) | (1<<CS12);  // Timer mode with 1024 prescler
-    TIMSK1 = (1 << TOIE1); // Enable timer1 overflow interrupt(TOIE1)
+    TCCR1B = (_BV(CS10)) | (_BV(CS12));  // Timer mode with 1024 prescler
+    TIMSK1 = (_BV(TOIE1)); // Enable timer1 overflow interrupt(TOIE1)
     sei();        // Enable global interrupts by setting global interrupt enable bit in SREG
 }
 

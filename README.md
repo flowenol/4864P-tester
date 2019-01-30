@@ -9,11 +9,12 @@ All you need are:
 * Arduino Uno or any pin compatible board.
 * ISP programmer (I use stk500 compatible programmer).
 * A single HM4864P-2 chip. 
+* Optionally, a single LED if the built-in LED on pin 13 (PB5) is not visible enough.
 
 ## Operation
 
 * LED is glowing continuously - memory chip has passed all tests.
-* LED is binking - memory chip is damaged.
+* LED is blinking - memory chip is damaged.
 
 ## Schematics
 
