@@ -11,6 +11,14 @@ All you need are:
 * A single HM4864P-2 chip. 
 * Optionally, a single LED if the built-in LED on pin 13 (PB5) is not visible enough.
 
+## Installation
+
+Upon successful build of the circuit as shown below, attach (via the ICSP connector) and set the proper ISP programmer device in ```Makefile```, and then just type in:
+
+```make flash```
+
+This will build the firmware and flash it to the connected device. 
+
 ## Operation
 
 * LED is glowing continuously - memory chip has passed all tests.
@@ -23,5 +31,6 @@ All you need are:
 ## Acknowledgments
 
 * This is a simple educational project, and was developed to this sole purpose.
+* Nevertheless, you should be able to diagnose failed memory chips in your Commodore C64 board.
 * I take no responsibility for any negative outcomes or damage you may encounter using this project.
 
