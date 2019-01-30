@@ -31,7 +31,7 @@ This will build the firmware and flash it to the connected device.
 
 ![Schematics](./4864P-tester_bb.svg)
 
-## Acknowledgments
+## Disclaimer
 
 * This is a simple educational project, and was developed to this sole purpose.
 * Nevertheless, you should be able to diagnose failed memory chips in your Commodore C64 board.
