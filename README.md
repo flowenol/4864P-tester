@@ -1,6 +1,6 @@
 # Hitachi 4864P-2 Memory Tester
 
-This is a Arduino sketch to test Hitachi [HM4864P-2](https://www.datasheets360.com/part/detail/hm4864p-2/2844863174925753224/) dynamic memory chips, used in some Commodore C64 boards. It was written using plain AVR-libc omitting the Arduino bootloader, mainly due to poor switching speed of Arduino's ```digitalWrite()``` (overhead up to 40 times slower) and 10us upper limit for HM4864P-2 RAS strobe. 
+This is a Arduino sketch to test Hitachi [HM4864P-2](https://www.datasheets360.com/part/detail/hm4864p-2/2844863174925753224/) dynamic memory chips, used in some Commodore C64 boards. It was written using plain avr-libc omitting the Arduino bootloader, mainly due to poor switching speed of Arduino's ```digitalWrite()``` (overhead up to 40 times slower) and 10us upper limit for HM4864P-2 RAS strobe. 
 
 ## Prerequisites
 
@@ -10,6 +10,9 @@ All you need are:
 * ISP programmer (I use stk500 compatible programmer).
 * A single HM4864P-2 chip. 
 * Optionally, a single LED if the built-in LED on pin 13 (PB5) is not visible enough.
+* [avr-gcc](https://gcc.gnu.org/wiki/avr-gcc)
+* [avr-libc](https://www.nongnu.org/avr-libc/)
+* [AVRDUDE](https://www.nongnu.org/avrdude/)
 
 ## Installation
 
@@ -32,5 +35,5 @@ This will build the firmware and flash it to the connected device.
 
 * This is a simple educational project, and was developed to this sole purpose.
 * Nevertheless, you should be able to diagnose failed memory chips in your Commodore C64 board.
-* I take no responsibility for any negative outcomes or damage you may encounter using this project.
+* I take no responsibility for any negative outcomes or damage you may cause using this project.
 
