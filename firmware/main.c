@@ -1,6 +1,6 @@
 /* Name: main.c
  * Author: flovenol@gmail.com
- * License: Apache License ver 2.0
+ * License: MIT License
  */
 #ifndef F_CPU
 #define F_CPU 16000000UL
